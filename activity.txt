@@ -2,3 +2,5 @@ ADMIN adminGroup2 menambahkan buku: tes1 | Stok: 10
 MEMBER memberGroup2 meminjam buku: tes1
 ADMIN adminGroup2 menambahkan buku: tes1 | Stok: 10
 MEMBER memberGroup2 meminjam buku: tes1
+ADMIN adminGroup2 menambahkan buku: Atomic Habit | Stok: 10
+ADMIN adminGroup2 menambahkan buku: Filosofi Teras | Stok: 10

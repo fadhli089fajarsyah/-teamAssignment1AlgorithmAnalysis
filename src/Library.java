@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class Library {
+
     private ArrayList<Book> books;
 
     public Library() {
@@ -9,10 +10,24 @@ public class Library {
         loadBooks();
     }
 
-    public void addBook(String title, String author, int stock, String adminName) {
+    public void addBook(
+        String title,
+        String author,
+        int stock,
+        String adminName
+    ) {
         books.add(new Book(title, author, stock));
-        System.out.println("Buku berhasil ditambahkan: " + title + " | Stok: " + stock);
-        logActivity("ADMIN " + adminName + " menambahkan buku: " + title + " | Stok: " + stock);
+        System.out.println(
+            "Buku berhasil ditambahkan: " + title + " | Stok: " + stock
+        );
+        logActivity(
+            "ADMIN " +
+                adminName +
+                " menambahkan buku: " +
+                title +
+                " | Stok: " +
+                stock
+        );
         saveBooks();
     }
 
@@ -42,39 +57,109 @@ public class Library {
             System.out.println("Belum ada buku di perpustakaan.");
         } else {
             System.out.println("=== Semua Buku ===");
+            String line =
+                "+----+-------------------------+--------------------+------+-----------+";
+            System.out.println(line);
+            System.out.printf(
+                "| %-2s | %-23s | %-18s | %-4s | %-9s |%n",
+                "No",
+                "Judul Buku",
+                "Pengarang",
+                "Stok",
+                "Status"
+            );
+            System.out.println(line);
+            int i = 1;
             for (Book book : books) {
-                System.out.println(book);
+                String status = book.isAvailable() ? "Tersedia" : "Habis";
+                System.out.printf(
+                    "| %-2d | %-23s | %-18s | %-4d | %-9s |%n",
+                    i++,
+                    book.getTitle(),
+                    book.getAuthor(),
+                    book.getStock(),
+                    status
+                );
             }
+            System.out.println(line);
         }
     }
 
     public void showAvailableBooks() {
-        boolean anyAvailable = false;
-        System.out.println("=== Buku Tersedia ===");
+        ArrayList<Book> availableBooks = new ArrayList<>();
         for (Book book : books) {
             if (book.isAvailable()) {
-                System.out.println(book);
-                anyAvailable = true;
+                availableBooks.add(book);
             }
         }
-        if (!anyAvailable) {
-            System.out.println("Tidak ada buku tersedia.");
+
+        if (availableBooks.isEmpty()) {
+            System.out.println("Tidak ada buku tersedia saat ini.");
+        } else {
+            System.out.println("=== Buku Tersedia ===");
+            String line =
+                "+----+-------------------------+--------------------+------+-----------+";
+            System.out.println(line);
+            System.out.printf(
+                "| %-2s | %-23s | %-18s | %-4s | %-9s |%n",
+                "No",
+                "Judul Buku",
+                "Pengarang",
+                "Stok",
+                "Status"
+            );
+            System.out.println(line);
+            int i = 1;
+            for (Book book : availableBooks) {
+                String status = book.isAvailable() ? "Tersedia" : "Habis";
+                System.out.printf(
+                    "| %-2d | %-23s | %-18s | %-4d | %-9s |%n",
+                    i++,
+                    book.getTitle(),
+                    book.getAuthor(),
+                    book.getStock(),
+                    status
+                );
+            }
+            System.out.println(line);
         }
     }
 
     private void loadBooks() {
-        try {
-            File file = new File("books.txt");
-            if (!file.exists()) file.createNewFile();
-        } catch (IOException e) {
-            System.out.println("Gagal membaca file: " + e.getMessage());
+        try (
+            BufferedReader br = new BufferedReader(new FileReader("books.txt"))
+        ) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(";");
+                if (parts.length == 3) {
+                    String title = parts[0];
+                    String author = parts[1];
+                    int stock = Integer.parseInt(parts[2]);
+                    books.add(new Book(title, author, stock));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            // Ini normal kalau file belum ada, file akan dibuat nanti.
+        } catch (IOException | NumberFormatException e) {
+            System.out.println(
+                "Gagal memuat buku dari file: " + e.getMessage()
+            );
         }
     }
 
     public void saveBooks() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("books.txt"))) {
+        try (
+            BufferedWriter bw = new BufferedWriter(new FileWriter("books.txt"))
+        ) {
             for (Book book : books) {
-                bw.write(book.getTitle() + ";" + book.getAuthor() + ";" + book.getStock());
+                bw.write(
+                    book.getTitle() +
+                        ";" +
+                        book.getAuthor() +
+                        ";" +
+                        book.getStock()
+                );
                 bw.newLine();
             }
         } catch (IOException e) {
@@ -83,7 +168,11 @@ public class Library {
     }
 
     public void logActivity(String message) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("activity.txt", true))) {
+        try (
+            BufferedWriter bw = new BufferedWriter(
+                new FileWriter("activity.txt", true)
+            )
+        ) {
             bw.write(message);
             bw.newLine();
         } catch (IOException e) {
