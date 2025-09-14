@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
         Library library = new Library();
         Scanner sc = new Scanner(System.in);
@@ -8,7 +9,9 @@ public class Main {
         System.out.println("=== SISTEM PERPUSTAKAAN ===");
 
         while (true) {
-            System.out.print("\nMasukkan nama user (Admin: adminGroup2 / Member: memberGroup2, 0 untuk keluar): ");
+            System.out.print(
+                "\nMasukkan nama user (Admin: adminGroup2 / Member: memberGroup2, 0 untuk keluar): "
+            );
             String name = sc.nextLine();
 
             if (name.equals("0")) {
@@ -16,15 +19,17 @@ public class Main {
                 break;
             }
 
+            User user;
             if (name.equals("adminGroup2")) {
-                Admin admin = new Admin(name);
-                adminMenu(admin, library, sc);
+                user = new Admin(name);
             } else if (name.equals("memberGroup2")) {
-                Member member = new Member(name);
-                memberMenu(member, library, sc);
+                user = new Member(name);
             } else {
                 System.out.println("Nama user tidak valid!");
+                continue;
             }
+
+            user.interact(library, sc);
         }
 
         sc.close();

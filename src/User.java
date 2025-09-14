@@ -1,5 +1,6 @@
-public class User {
+import java.util.Scanner;
 
+public abstract class User {
     protected String name;
 
     public User(String name) {
@@ -18,4 +19,6 @@ public class User {
             System.out.println("Buku tidak ditemukan: " + title);
         }
     }
+
+    public abstract void interact(Library library, Scanner sc);
 }
